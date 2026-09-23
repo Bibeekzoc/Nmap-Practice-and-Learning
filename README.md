@@ -68,7 +68,7 @@ In a workflow: *Scoping → **Scanning (Nmap)** → Enumeration → Vulnerabilit
 ## 4. Host discovery
 | Command | Purpose |
 |---------|---------|
-| `nmap -sn 192.168.56.0/24` | Ping sweep, no port scan |
+| `nmap -sn 192.168.1.0/24` | Ping sweep, no port scan |
 | `nmap -sn -PE <t>` | ICMP echo |
 | `nmap -sn -PS22,80,443 <t>` | TCP SYN ping |
 | `nmap -sn -PA80 <t>` | TCP ACK ping |
@@ -79,7 +79,7 @@ In a workflow: *Scoping → **Scanning (Nmap)** → Enumeration → Vulnerabilit
 
 Save live hosts for later:
 ```bash
-nmap -sn 192.168.56.0/24 -oG - | awk '/Up$/{print $2}' > live-hosts.txt
+nmap -sn 192.168.1.0/24 -oG - | awk '/Up$/{print $2}' > live-hosts.txt
 nmap -iL live-hosts.txt -F
 ```
 
@@ -95,28 +95,28 @@ nmap -iL live-hosts.txt -F
 | `-sF` / `-sN` / `-sX` | FIN / NULL / Xmas | Results often `open\|filtered` |
 
 ```bash
-sudo nmap -sS -p 1-1000 192.168.56.101
-nmap -sT -p 80,443 192.168.56.101
-sudo nmap -sU --top-ports 20 192.168.56.101
-sudo nmap -sA -p 80,443 192.168.56.101
-sudo nmap -p- --min-rate 1000 192.168.56.101
+sudo nmap -sS -p 1-1000 192.168.1.101
+nmap -sT -p 80,443 192.168.1.101
+sudo nmap -sU --top-ports 20 192.168.1.101
+sudo nmap -sA -p 80,443 192.168.1.101
+sudo nmap -p- --min-rate 1000 192.168.1.101
 ```
 **Tips:** scan all TCP ports at least once; limit UDP to `--top-ports`; use `--reason` to see *why* a state was assigned.
 
 ## 6. Service and version detection
 `-sV` probes open ports and matches replies against Nmap's signature database.
 ```bash
-nmap -sV 192.168.56.101
-nmap -sV --version-intensity 9 -p 21,22,80 192.168.56.101
-nmap -sC -sV -oA scans/target 192.168.56.101
+nmap -sV 192.168.1.101
+nmap -sV --version-intensity 9 -p 21,22,80 192.168.1.101
+nmap -sC -sV -oA scans/target 192.168.1.101
 ```
 Why it matters: finds services on non-standard ports and exact versions to research against CVE databases. **Limitation:** banners can be changed, and a version match is evidence, not proof (patches may be backported).
 
 ## 7. OS detection
 ```bash
-sudo nmap -O 192.168.56.101
-sudo nmap -O --osscan-guess 192.168.56.101
-sudo nmap -A 192.168.56.101      # -O -sV -sC --traceroute
+sudo nmap -O 192.168.1.101
+sudo nmap -O --osscan-guess 192.168.1.101
+sudo nmap -A 192.168.1.101      # -O -sV -sC --traceroute
 ```
 Needs root and works best with at least one open and one closed TCP port. Results are **probabilistic**; firewalls, NAT, and VMs can skew them. Cross-check with banners.
 
@@ -140,7 +140,7 @@ Useful extras: `-v`, `--open`, `--reason`, `--packet-trace`, `--resume`. HTML re
 ## 9. Interpreting Nmap output
 Illustrative sample (not from a real target):
 ```
-Nmap scan report for 192.168.56.101
+Nmap scan report for 192.168.1.101
 Host is up (0.00045s latency).
 Not shown: 995 closed tcp ports (reset)
 PORT    STATE SERVICE VERSION
@@ -165,9 +165,9 @@ NSE runs **Lua scripts** for discovery, enumeration, and vulnerability checks (`
 > ⚠️ `brute`, `dos`, `exploit`, `fuzzer`, `intrusive` can disrupt services. Only use on my own throwaway lab VMs.
 
 ```bash
-nmap -sC 192.168.56.101
-nmap --script=safe 192.168.56.101
-nmap --script=vuln 192.168.56.101
+nmap -sC 192.168.1.101
+nmap --script=safe 192.168.1.101
+nmap --script=vuln 192.168.1.101
 nmap --script=http-title,http-headers,http-methods -p 80 <t>
 nmap --script=ftp-anon -p 21 <t>
 nmap --script=ssh-hostkey -p 22 <t>
@@ -190,10 +190,10 @@ Script output is a **lead to verify**, not final proof.
 ## 11. Command cheat sheet
 ```bash
 # Targets
-nmap 192.168.56.101 | nmap 192.168.56.1-50 | nmap 192.168.56.0/24 | nmap -iL targets.txt
+nmap 192.168.1.101 | nmap 192.168.1.1-50 | nmap 192.168.1.0/24 | nmap -iL targets.txt
 
 # Recommended workflow
-nmap -sn 192.168.56.0/24 -oA scans/01-discovery
+nmap -sn 192.168.1.0/24 -oA scans/01-discovery
 sudo nmap -p- --min-rate 1000 -oA scans/02-allports <target>
 sudo nmap -sC -sV -O -p <open-ports> -oA scans/03-detailed <target>
 nmap --script=vuln -p <open-ports> -oA scans/04-vuln <target>
@@ -204,32 +204,58 @@ nmap --script=vuln -p <open-ports> -oA scans/04-vuln <target>
 ### Lab environment
 | Item | Details |
 |------|---------|
-| Scanner | _Kali Linux / Ubuntu — fill in_ |
-| Nmap version | _paste `nmap --version`_ |
-| Virtualization | _VirtualBox / VMware — fill in_ |
-| Network | Isolated host-only network, `192.168.56.0/24` _(edit)_ |
-| Targets | _e.g., Metasploitable 2, DVWA, own VMs, scanme.nmap.org_ |
+| Scanner | _Kali Linux  |
+| Nmap version | Nmap version 7.99 |
+| Virtualization | VMware |
+| Network | Isolated host-only network, `192.168.1.0/24` |
+| Targets | Metasploitable 2, DVWA,  scanme.nmap.org_ |
 
 ### Screenshot evidence
 ![Nmap lab practice](screenshots/nmap-practice.png)
+![Nmap lab practice](screenshots/nmap-practice1.png)
+![Nmap lab practice](screenshots/nmap-practice2.png)
+![Nmap lab practice](screenshots/nmap-practice3.png)
+![Nmap lab practice](screenshots/nmap-practice4.png)
+![Nmap lab practice](screenshots/nmap-practice5.png)
+![Nmap lab practice](screenshots/nmap-practice6.png)
+
+
+
 
 
 ### Practice log
 | # | Date | Target | Command | What I found |
 |---|------|--------|---------|--------------|
-| 1 | _YYYY-MM-DD_ | _lab IP_ | `nmap -sn 192.168.56.0/24` | _live hosts_ |
-| 2 | | | `sudo nmap -sS -p- --min-rate 1000 <t>` | _open ports_ |
-| 3 | | | `nmap -sV <t>` | _services/versions_ |
-| 4 | | | `sudo nmap -O <t>` | _OS guess vs real OS_ |
-| 5 | | | `nmap -sC <t>` | _default script results_ |
-| 6 | | | `nmap --script=vuln <t>` | _findings + how I verified them_ |
+| 1 | 2026-09-23 | 192.168.1.19 | `nmap -sn 192.168.1.0/24` | 192.168.1.119 |
+| 2 | 2026-09-23 | 192.168.1.19| `sudo nmap -sS -p- --min-rate 1000 <t>` | 21,22,23,25,80 ect. |
+| 3 | 2026-09-23 | 192.168.1.19| `nmap -sV <t>` |ftp/vsftpd 2.3.4,ssh/OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0),telnet/Linux telnetd,smtp Postfix smtpd,http/Apache httpd 2.2.8 ((Ubuntu) DAV/2) |
+| 4 | 2026-09-23 | 192.168.1.19| `sudo nmap -O <t>` | Linux 2.6.9 - 2.6.33 |
+| 5 | 2026-09-23 | 192.168.1.19| `nmap -sC <t>` | 21/tcp   open  ftp
+| ftp-syst: 
+|   STAT: 
+| FTP server status:
+|      Connected to 192.168.1.87
+|      Logged in as ftp
+|      TYPE: ASCII
+|      No session bandwidth limit
+|      Session timeout in seconds is 300
+|      Control connection is plain text
+|      Data connections will be plain text
+|      vsFTPd 2.3.4 - secure, fast, stable
+|_End of status
+|_ftp-anon: Anonymous FTP login allowed (FTP code 230)
+ |
+| 6 | 2026-09-23 | 192.168.1.19| `nmap --script=vuln <t>` |  |
 
-### Mini report (fill with real results)
+### Mini report 
 | Port | Service | Version | Risk / Note |
 |------|---------|---------|-------------|
-| _ | _ | _ | _ |
+| 21/tcp | ftp | vsftpd 2.3.4 | VSFTPD Backdoor: Sending a username containing a smiley face :) triggers a hidden backdoor, instantly spawning a root shell on port 6200.|
+| 22/tcp | ssh | OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0) | Weak/Default Credentials: Vulnerable to brute-force attacks. Default system credentials (msfadmin:msfadmin) grant full terminal access.|
+| 23/tcp | telnet | Linux telnetd | Cleartext Transmission: Transmits all user credentials and commands in plain text, heavily exposed to packet sniffing.|
+| 80/http | http |  httpd 2.2.8  | Web App Flaws: Hosts vulnerable web applications like DVWA, Mutillidae, and phpMyAdmin, which are susceptible to SQL Injection, XSS, and command injection|
 
-**Recommendations:** close unnecessary ports, update outdated services, replace cleartext protocols, disable anonymous access.
+
 
 ## 13. Lessons learned
 - Discovery first; `-Pn` is a fallback, not a default.
