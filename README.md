@@ -230,8 +230,7 @@ nmap --script=vuln -p <open-ports> -oA scans/04-vuln <target>
 | 2 | 2026-09-23 | 192.168.1.19| `sudo nmap -sS -p- --min-rate 1000 192.168.1.119` | 21,22,23,25,80 ect. |
 | 3 | 2026-09-23 | 192.168.1.19| `nmap -sV 192.168.1.119` |ftp/vsftpd 2.3.4,ssh/OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0),telnet/Linux telnetd,smtp Postfix smtpd,http/Apache httpd 2.2.8 ((Ubuntu) DAV/2) |
 | 4 | 2026-09-23 | 192.168.1.19| `sudo nmap -O 192.168.1.119` | Linux 2.6.9 - 2.6.33 |
-| 5 | 2026-09-23 | 192.168.1.19| `nmap -sC 192.168.1.119` | 21/tcp   open  ftp ftp-syst: STAT: 
-FTP server status: Connected to 192.168.1.87 Logged in as ftp TYPE: ASCII No session bandwidth limit Session timeout in seconds is 300 Control connection is plain text Data connections will be plain text vsFTPd 2.3.4 - secure, fast, stable_End of status_ftp-anon: Anonymous FTP login allowed (FTP code 230)|
+| 5 | 2026-09-23 | 192.168.1.19| `nmap -sC 192.168.1.119` | 21/tcp   open  ftp ftp-syst: STAT: FTP server status: Connected to 192.168.1.87 Logged in as ftp TYPE: ASCII No session bandwidth limit Session timeout in seconds is 300 Control connection is plain text Data connections will be plain text vsFTPd 2.3.4 - secure, fast, stable_End of status_ftp-anon: Anonymous FTP login allowed (FTP code 230)|
 | 6 | 2026-09-23 | 192.168.1.19| `nmap --script=vuln 192.168.1.119` |  |
 
 ### Mini report 
