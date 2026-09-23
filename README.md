@@ -212,7 +212,7 @@ nmap --script=vuln -p <open-ports> -oA scans/04-vuln <target>
 
 ### Screenshot evidence
 ![Nmap lab practice](screenshots/nmap-practice.png)
-*Replace with a real screenshot showing the command and its output.*
+
 
 ### Practice log
 | # | Date | Target | Command | What I found |
@@ -250,5 +250,4 @@ nmap --script=vuln -p <open-ports> -oA scans/04-vuln <target>
 - https://nmap.org/nsedoc/ — NSE script docs
 - *Nmap Network Scanning* by Gordon "Fyodor" Lyon — https://nmap.org/book/
 
-## 📄 License
-MIT
+
